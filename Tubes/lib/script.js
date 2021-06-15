@@ -1,20 +1,17 @@
 var scene = new THREE.Scene();
 const aspect = window.innerWidth / window.innerHeight;
 const windowSize = 20;
-// scene.background = new THREE.Color(0xdddddd);
 
-// var cam = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight);
+var cam = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
 
-let cam = new THREE.OrthographicCamera(
-  -windowSize * aspect,
-  windowSize * aspect,
-  windowSize,
-  -windowSize,
-  -100,
-  100
-);
-
-// new THREE.OrthographicCamera()
+// let cam = new THREE.OrthographicCamera(
+//   -windowSize * aspect,
+//   windowSize * aspect,
+//   windowSize,
+//   -windowSize,
+//   -100,
+//   100
+// );
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -57,13 +54,26 @@ let grid = new THREE.GridHelper(100, 10, 0xfafafa, 0xfafafa);
 grid.position.y = -1;
 scene.add(grid);
 
-cam.position.set(5, 3, 4);
+// cam.position.set(5, 3, 4);
+cam.position.z = 35;
+cam.position.y = 10;
 // cam.position.set(5, 3, 4);
 // cam.rotation.x = 6;
 // cam.rotation.y = 1;
 
 var controls = new THREE.OrbitControls(cam, renderer.domElement);
-// controls.update();
+controls.update();
+
+// let loader3 = new THREE.CubeTextureLoader();
+// let skybox = loader3.load([
+//   "skybox/px.png",
+//   "skybox/nx.png",
+//   "skybox/py.png",
+//   "skybox/ny.png",
+//   "skybox/pz.png",
+//   "skybox/nz.png",
+// ]);
+// scene.background = skybox;
 
 window.addEventListener("resize", function () {
   var width = window.innerWidth;
@@ -108,11 +118,47 @@ document.body.onkeypress = function (evt) {
 //   // }
 // }
 
+let starGeo, stars;
+function backgroundAnimate() {
+  starGeo = new THREE.Geometry();
+  for(let i=0;i<6000;i++) {
+    star = new THREE.Vector3(
+      Math.random() * 600 - 300,
+      Math.random() * 600 - 300,
+      Math.random() * 600 - 300
+    );
+    star.velocity = 0;
+    star.acceleration = 0.02;
+    starGeo.vertices.push(star);
+  }
+  let sprite = new THREE.TextureLoader().load('/skybox/stars.jpg');
+  let starMaterial = new THREE.PointsMaterial({
+    color: 0xaaaaaa,
+    size: 0.7,
+    map: sprite
+  });
+
+  stars = new THREE.Points(starGeo, starMaterial);
+  scene.add(stars);
+  animate();
+}
+
+
 function obstacles() {}
 
 const clock = new THREE.Clock();
 
 function animate() {
+  starGeo.vertices.forEach(p=>{
+    p.velocity += p.acceleration;
+    p.y -= p.velocity;
+    if (p.y <-200) {
+      p.y = 200;
+      p.velocity = 0;
+    }
+  });
+  starGeo.verticesNeedUpdate = true;
+  stars.rotation.y += 0.002;
   requestAnimationFrame(animate);
 
   // virus.position.z += 0.1;
@@ -134,3 +180,4 @@ function animate() {
   //   process_keyboard();
 }
 animate();
+backgroundAnimate();
