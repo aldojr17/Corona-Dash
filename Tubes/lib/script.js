@@ -83,7 +83,7 @@ window.addEventListener("resize", function () {
   cam.updateProjectionMatrix();
 });
 
-let keyboard = [];
+// let keyboard = [];
 
 // document.body.onkeydown = function (evt) {
 //   keyboard[evt.key] = true;
@@ -118,30 +118,30 @@ document.body.onkeypress = function (evt) {
 //   // }
 // }
 
-let starGeo, stars;
-function backgroundAnimate() {
-  starGeo = new THREE.Geometry();
-  for(let i=0;i<6000;i++) {
-    star = new THREE.Vector3(
-      Math.random() * 600 - 300,
-      Math.random() * 600 - 300,
-      Math.random() * 600 - 300
-    );
-    star.velocity = 0;
-    star.acceleration = 0.02;
-    starGeo.vertices.push(star);
-  }
-  let sprite = new THREE.TextureLoader().load('/skybox/stars.jpg');
-  let starMaterial = new THREE.PointsMaterial({
-    color: 0xaaaaaa,
-    size: 0.7,
-    map: sprite
-  });
+// let starGeo, stars;
+// function backgroundAnimate() {
+//   starGeo = new THREE.Geometry();
+//   for(let i=0;i<6000;i++) {
+//     star = new THREE.Vector3(
+//       Math.random() * 600 - 300,
+//       Math.random() * 600 - 300,
+//       Math.random() * 600 - 300
+//     );
+//     star.velocity = 0;
+//     star.acceleration = 0.02;
+//     starGeo.vertices.push(star);
+//   }
+//   let sprite = new THREE.TextureLoader().load('/skybox/stars.jpg');
+//   let starMaterial = new THREE.PointsMaterial({
+//     color: 0xaaaaaa,
+//     size: 0.7,
+//     map: sprite
+//   });
 
-  stars = new THREE.Points(starGeo, starMaterial);
-  scene.add(stars);
-  animate();
-}
+//   stars = new THREE.Points(starGeo, starMaterial);
+//   scene.add(stars);
+//   animate();
+// }
 
 
 function obstacles() {}
@@ -149,16 +149,16 @@ function obstacles() {}
 const clock = new THREE.Clock();
 
 function animate() {
-  starGeo.vertices.forEach(p=>{
-    p.velocity += p.acceleration;
-    p.y -= p.velocity;
-    if (p.y <-200) {
-      p.y = 200;
-      p.velocity = 0;
-    }
-  });
-  starGeo.verticesNeedUpdate = true;
-  stars.rotation.y += 0.002;
+  // starGeo.vertices.forEach(p=>{
+  //   p.velocity += p.acceleration;
+  //   p.y -= p.velocity;
+  //   if (p.y <-200) {
+  //     p.y = 200;
+  //     p.velocity = 0;
+  //   }
+  // });
+  // starGeo.verticesNeedUpdate = true;
+  // stars.rotation.y += 0.002;
   requestAnimationFrame(animate);
 
   // virus.position.z += 0.1;
