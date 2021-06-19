@@ -1,4 +1,16 @@
 body {
-    margin: 0;
-    overflow: hidden;
+  margin: 0;
+  overflow: hidden;
+}
+
+.content {
+  position: absolute;
+  color: white;
+  top: 20px;
+  right: 25px;
+  font-size: x-large;
+}
+
+#textScore {
+  display: block;
 }
