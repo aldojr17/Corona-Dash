@@ -43,10 +43,16 @@ btnRestart.addEventListener("click", (ev) => {
 // hlight = new THREE.AmbientLight(0x404040,100);
 // scene.add(hlight);
 
-// directionalLight = new THREE.DirectionalLight(0xffffff,100);
-// directionalLight.position.set(0,1,0);
-// directionalLight.castShadow = true;
+// let spotLight = new THREE.SpotLight(0x404040);
+// spotLight.position.set(0,20,-50);
+// scene.add(spotLight);
+
+// let directionalLight = new THREE.DirectionalLight(0xcccccc,100);
+// directionalLight.position.set(0,0,-10);
+// let helper = new THREE.DirectionalLightHelper(directionalLight, 5);
+// // directionalLight.castShadow = true;
 // scene.add(directionalLight);
+// scene.add(helper);
 
 // Load Model Virus 1
 loader.load("model_virus/scene.gltf", function (gltf) {
@@ -92,6 +98,17 @@ let grid = new THREE.GridHelper(100, 10, 0xfafafa, 0xfafafa);
 grid.position.y = -1;
 scene.add(grid);
 
+// const plane = new THREE.PlaneGeometry(50,100);
+// const grass_texture = new THREE.TextureLoader().load('../skybox/texture.jpg');
+// const mat_rumput = new THREE.MeshBasicMaterial({
+//     map:grass_texture, 
+//     side: THREE.DoubleSide
+// });
+// let mesh_plane = new THREE.Mesh(plane,mat_rumput);
+// mesh_plane.position.set(0,0,-10);
+// scene.add(mesh_plane);
+// mesh_plane.rotation.x-=Math.PI/2;
+
 let controls = new THREE.OrbitControls(cam, renderer.domElement);
 controls.update();
 controls.enabled = false;
@@ -128,8 +145,8 @@ document.body.onkeypress = function (evt) {
       : (person.position.x = 10);
   } else if (evt.key == " ") {
     person.position.y == 0
-      ? (person.position.y += 10)
-      : (person.position.y = 10);
+      ? (person.position.y = 7)
+      : (person.position.y = 0);
   }
 };
 
@@ -179,6 +196,12 @@ function animate() {
   // starGeo.verticesNeedUpdate = true;
   // stars.rotation.y += 0.002;
   if (checkCollision(virus, person) || checkCollision(virus2, person)) {
+    let sound4 = new THREE.Audio(pendengar);
+    let loaderAudio4 = new THREE.AudioLoader().load("audio/audio_death.mp3", (hasil) => {
+        sound4.setBuffer(hasil);
+        sound4.setVolume(0.4);
+        sound4.play();
+    });
     modal.classList.add("show-modal");
     if (highScore.innerHTML < i) {
       highScore.innerHTML = i;
