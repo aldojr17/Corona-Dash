@@ -8,14 +8,18 @@
     <link rel="stylesheet" href="style.css" />
     <script src="node_modules/three/build/three.js"></script>
     <script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
-    <script src="node_modules/three/examples/js/controls/TrackballControls.js"></script>
     <script src="node_modules/three/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="node_modules/three/examples/js/loaders/FBXLoader.js"></script>
   </head>
   <body>
     <div class="content">
       <span id="textHighScore">High Score : <span id="highScore">0</span></span>
       <span id="textScore">Score : <span id="score">0</span></span>
+    </div>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <h1 id="textGameOver">Game Over!</h1>
+        <button id="btnRestart">Restart</button>
+      </div>
     </div>
     <script src="lib/script.js"></script>
     <script src="lib/audio.js"></script>

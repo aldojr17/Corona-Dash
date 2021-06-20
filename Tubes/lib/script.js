@@ -1,18 +1,44 @@
+// Deklarasi Variable
 var scene = new THREE.Scene();
 const aspect = window.innerWidth / window.innerHeight;
-const windowSize = 20;
-var randomPos = [10, 0, -10];
-
 var cam = new THREE.PerspectiveCamera(
-  60,
+  50,
   window.innerWidth / window.innerHeight,
   1,
-  1000
+  100
 );
-
-var renderer = new THREE.WebGLRenderer({ antialias: true });
+var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+const alert = document.getElementById("modal");
+const btnRestart = document.getElementById("btnRestart");
+const highScore = document.getElementById("highScore");
+const score = document.getElementById("score");
+const loader = new THREE.GLTFLoader();
+var randomPos = [10, 0, -10];
+var virus = new THREE.Object3D();
+var virus2 = new THREE.Object3D();
+var person = new THREE.Object3D();
+var mixer = new THREE.AnimationMixer(person);
+
+const clock = new THREE.Clock();
+var speed = 0;
+let i = 0;
+
+// Set Up Posisi Kamera
+cam.position.z = 35;
+cam.position.y = 10;
+
+// Variable High Score Dari Game Sebelumnya
+localStorage.getItem("highScore") == null
+  ? (highScore.innerHTML = "0")
+  : (highScore.innerHTML = localStorage.getItem("highScore"));
+
+// Reload Page Ketika Button Restart Ditekan
+btnRestart.addEventListener("click", (ev) => {
+  window.location.reload();
+});
 
 // hlight = new THREE.AmbientLight(0x404040,100);
 // scene.add(hlight);
@@ -22,8 +48,9 @@ document.body.appendChild(renderer.domElement);
 // directionalLight.castShadow = true;
 // scene.add(directionalLight);
 
-let loader2 = new THREE.GLTFLoader();
-loader2.load("model_virus/scene.gltf", function (gltf) {
+// Load Model Virus 1
+loader.load("model_virus/scene.gltf", function (gltf) {
+  scene.add(gltf.scene);
   virus = gltf.scene;
   virus.scale.set(0.5, 0.5, 0.5);
   virus.position.set(
@@ -31,10 +58,21 @@ loader2.load("model_virus/scene.gltf", function (gltf) {
     0,
     -10
   );
-  scene.add(virus);
 });
 
-let loader = new THREE.GLTFLoader();
+// Load Model Virus 2
+loader.load("model_virus/scene.gltf", function (gltf) {
+  scene.add(gltf.scene);
+  virus2 = gltf.scene;
+  virus2.scale.set(0.5, 0.5, 0.5);
+  virus2.position.set(
+    randomPos[Math.floor(Math.random() * randomPos.length)],
+    0,
+    -10
+  );
+});
+
+// Load Model Person
 loader.load("model_person/scene.gltf", function (gltf) {
   person = gltf.scene;
   person.scale.set(0.1, 0.1, 0.1);
@@ -46,23 +84,17 @@ loader.load("model_person/scene.gltf", function (gltf) {
   action.play();
 });
 
-var virus = new THREE.Object3D();
-var person = new THREE.Object3D();
-var mixer = new THREE.AnimationMixer(person);
-
-//light untuk person
-var light = new THREE.HemisphereLight(0xffffff, 0x000000, 2);
+//light untuk Model
+let light = new THREE.HemisphereLight(0xffffff, 0x000000, 2);
 scene.add(light);
 
 let grid = new THREE.GridHelper(100, 10, 0xfafafa, 0xfafafa);
 grid.position.y = -1;
 scene.add(grid);
 
-cam.position.z = 35;
-cam.position.y = 10;
-
-var controls = new THREE.OrbitControls(cam, renderer.domElement);
+let controls = new THREE.OrbitControls(cam, renderer.domElement);
 controls.update();
+controls.enabled = false;
 
 // let loader3 = new THREE.CubeTextureLoader();
 // let skybox = loader3.load([
@@ -75,14 +107,16 @@ controls.update();
 // ]);
 // scene.background = skybox;
 
+// Resize Window Function
 window.addEventListener("resize", function () {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
+  let width = window.innerWidth;
+  let height = window.innerHeight;
   renderer.setSize(width, height);
   cam.aspect = width / height;
   cam.updateProjectionMatrix();
 });
 
+// Move Left, Right, And Jump
 document.body.onkeypress = function (evt) {
   if (evt.key == "a") {
     person.position.x != -10
@@ -124,27 +158,15 @@ document.body.onkeypress = function (evt) {
 //   animate();
 // }
 
-// var randomPos = [-10, 0, 10];
-// randomPos[Math.floor(Math.random()*randomPos.length)];
-
-var unused = [];
-
-function obstacles() {
-  // loader2.load("model_virus/scene.gltf", function (gltf) {
-  //   virus2 = gltf.scene;
-  //   virus2.scale.set(0.5, 0.5, 0.5);
-  //   virus2.position.set(
-  //     randomPos[Math.floor(Math.random() * randomPos.length)],
-  //     0,
-  //     -10
-  //   );
-  //   scene.add(virus2);
-  // });
-  console.log("test");
+// Fungsi untuk check jika menabrak virus
+function checkCollision(virus, person) {
+  return (
+    Math.round(virus.position.z) == 19 &&
+    person.position.x == virus.position.x &&
+    person.position.y == virus.position.y
+  );
 }
-// obstacles();
-const clock = new THREE.Clock();
-let i = 0;
+
 function animate() {
   // starGeo.vertices.forEach(p=>{
   //   p.velocity += p.acceleration;
@@ -156,11 +178,12 @@ function animate() {
   // });
   // starGeo.verticesNeedUpdate = true;
   // stars.rotation.y += 0.002;
-  if (
-    Math.round(virus.position.z) == 19 &&
-    person.position.x == virus.position.x
-  ) {
-    alert("stop");
+  if (checkCollision(virus, person) || checkCollision(virus2, person)) {
+    modal.classList.add("show-modal");
+    if (highScore.innerHTML < i) {
+      highScore.innerHTML = i;
+      localStorage.setItem("highScore", i);
+    }
   } else {
     requestAnimationFrame(animate);
   }
@@ -175,19 +198,27 @@ function animate() {
         0,
         -10
       )
-    : (virus.position.z += 0.1);
+    : (virus.position.z += 0.1 + speed);
 
-  var delta = clock.getDelta();
+  Math.round(virus2.position.z) == 30
+    ? virus2.position.set(
+        randomPos[Math.floor(Math.random() * randomPos.length)],
+        0,
+        -10
+      )
+    : (virus2.position.z += 0.1 + speed);
+
+  let delta = clock.getDelta();
   mixer.update(delta);
 
   renderer.render(scene, cam);
-  document.getElementById("score").innerHTML = i++;
+  score.innerHTML = i++;
 }
 
-function draw() {
-  obstacles();
+function addSpeed() {
+  speed += 0.1;
 }
 
 animate();
-setInterval(draw, 5000);
+setInterval(addSpeed, 5000);
 // backgroundAnimate();

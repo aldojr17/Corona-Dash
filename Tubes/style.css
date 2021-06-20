@@ -14,3 +14,45 @@ body {
 #textScore {
   display: block;
 }
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 1rem 1.5rem;
+  width: 24rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.show-modal {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+#btnRestart {
+  border: none;
+  transition-duration: 0.4s;
+  background-color: black;
+  padding: 10px;
+  color: white;
+}
+
+#btnRestart:hover {
+  background-color: white;
+  color: black;
+}
