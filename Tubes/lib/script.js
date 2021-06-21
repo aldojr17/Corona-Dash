@@ -11,7 +11,7 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const alert = document.getElementById("modal");
+const modal = document.getElementById("modal");
 const btnRestart = document.getElementById("btnRestart");
 const highScore = document.getElementById("highScore");
 const score = document.getElementById("score");
@@ -98,16 +98,16 @@ let grid = new THREE.GridHelper(100, 10, 0xfafafa, 0xfafafa);
 grid.position.y = -1;
 scene.add(grid);
 
-// const plane = new THREE.PlaneGeometry(50,100);
-// const grass_texture = new THREE.TextureLoader().load('../skybox/texture.jpg');
-// const mat_rumput = new THREE.MeshBasicMaterial({
-//     map:grass_texture, 
-//     side: THREE.DoubleSide
+// const plane = new THREE.PlaneGeometry(50, 100);
+// const grass_texture = new THREE.TextureLoader().load("tesseract.jpg");
+// const mat_rumput = new THREE.MeshPhongMaterial({
+//   emissiveMap: grass_texture,
+//   map
 // });
-// let mesh_plane = new THREE.Mesh(plane,mat_rumput);
-// mesh_plane.position.set(0,0,-10);
+// let mesh_plane = new THREE.Mesh(plane, mat_rumput);
+// mesh_plane.position.set(0, 0, -50);
 // scene.add(mesh_plane);
-// mesh_plane.rotation.x-=Math.PI/2;
+// mesh_plane.rotation.x -= Math.PI / 2;
 
 let controls = new THREE.OrbitControls(cam, renderer.domElement);
 controls.update();
@@ -144,44 +144,50 @@ document.body.onkeypress = function (evt) {
       ? (person.position.x += 10)
       : (person.position.x = 10);
   } else if (evt.key == " ") {
-    person.position.y == 0
-      ? (person.position.y = 7)
-      : (person.position.y = 0);
+    person.position.y == 0 ? (person.position.y = 7) : (person.position.y = 0);
   }
 };
 
-// let starGeo, stars;
+// var vertices, starGeo, stars;
+// var verticesArray = [];
 // function backgroundAnimate() {
-//   starGeo = new THREE.Geometry();
-//   for(let i=0;i<6000;i++) {
-//     star = new THREE.Vector3(
-//       Math.random() * 600 - 300,
-//       Math.random() * 600 - 300,
-//       Math.random() * 600 - 300
-//     );
-//     star.velocity = 0;
-//     star.acceleration = 0.02;
-//     starGeo.vertices.push(star);
+//   starGeo = new THREE.BufferGeometry();
+//   for (let i = 0; i < 600; i++) {
+//     let x = Math.random() * 600 - 300;
+//     let y = Math.random() * 600 - 300;
+//     let z = Math.random() * 600 - 300;
+//     verticesArray.push(x, y, z);
 //   }
-//   let sprite = new THREE.TextureLoader().load('/skybox/stars.jpg');
+//   starGeo.setAttribute(
+//     "position",
+//     new THREE.Float32BufferAttribute(verticesArray, 3)
+//   );
+//   let sprite = new THREE.TextureLoader().load("../skybox/star.png");
+//   console.log(sprite);
 //   let starMaterial = new THREE.PointsMaterial({
-//     color: 0xaaaaaa,
-//     size: 0.7,
-//     map: sprite
+//     color: 0xcccccc,
+//     map: sprite,
 //   });
-
 //   stars = new THREE.Points(starGeo, starMaterial);
 //   scene.add(stars);
-//   animate();
 // }
 
 // Fungsi untuk check jika menabrak virus
 function checkCollision(virus, person) {
-  return (
+  if (
     Math.round(virus.position.z) == 19 &&
     person.position.x == virus.position.x &&
     person.position.y == virus.position.y
-  );
+  ) {
+    return true;
+  } else if (
+    Math.round(person.position.y) == 1 &&
+    person.position.x == virus.position.x &&
+    Math.round(virus.position.z) == person.position.z
+  ) {
+    return true;
+  }
+  return false;
 }
 
 function animate() {
@@ -197,11 +203,14 @@ function animate() {
   // stars.rotation.y += 0.002;
   if (checkCollision(virus, person) || checkCollision(virus2, person)) {
     let sound4 = new THREE.Audio(pendengar);
-    let loaderAudio4 = new THREE.AudioLoader().load("audio/audio_death.mp3", (hasil) => {
+    let loaderAudio4 = new THREE.AudioLoader().load(
+      "audio/audio_death.mp3",
+      (hasil) => {
         sound4.setBuffer(hasil);
         sound4.setVolume(0.4);
         sound4.play();
-    });
+      }
+    );
     modal.classList.add("show-modal");
     if (highScore.innerHTML < i) {
       highScore.innerHTML = i;
