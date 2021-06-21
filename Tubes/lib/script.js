@@ -1,5 +1,6 @@
 // Deklarasi Variable
 var scene = new THREE.Scene();
+scene.background = new THREE.TextureLoader().load('./background/bg.png');
 const aspect = window.innerWidth / window.innerHeight;
 var cam = new THREE.PerspectiveCamera(
   50,
@@ -27,8 +28,8 @@ var speed = 0;
 let i = 0;
 
 // Set Up Posisi Kamera
-cam.position.z = 35;
-cam.position.y = 10;
+cam.position.z = 40;
+cam.position.y = 7;
 
 // Variable High Score Dari Game Sebelumnya
 localStorage.getItem("highScore") == null
@@ -40,19 +41,10 @@ btnRestart.addEventListener("click", (ev) => {
   window.location.reload();
 });
 
-// hlight = new THREE.AmbientLight(0x404040,100);
-// scene.add(hlight);
-
-// let spotLight = new THREE.SpotLight(0x404040);
-// spotLight.position.set(0,20,-50);
-// scene.add(spotLight);
-
-// let directionalLight = new THREE.DirectionalLight(0xcccccc,100);
-// directionalLight.position.set(0,0,-10);
-// let helper = new THREE.DirectionalLightHelper(directionalLight, 5);
-// // directionalLight.castShadow = true;
-// scene.add(directionalLight);
-// scene.add(helper);
+let spotLight = new THREE.SpotLight(0xffffff, 1.3);
+spotLight.position.set(0,10,29);
+spotLight.angle = Math.PI/4;
+scene.add(spotLight);
 
 // Load Model Virus 1
 loader.load("model_virus/scene.gltf", function (gltf) {
@@ -90,40 +82,6 @@ loader.load("model_person/scene.gltf", function (gltf) {
   action.play();
 });
 
-//light untuk Model
-let light = new THREE.HemisphereLight(0xffffff, 0x000000, 2);
-scene.add(light);
-
-let grid = new THREE.GridHelper(100, 10, 0xfafafa, 0xfafafa);
-grid.position.y = -1;
-scene.add(grid);
-
-// const plane = new THREE.PlaneGeometry(50, 100);
-// const grass_texture = new THREE.TextureLoader().load("tesseract.jpg");
-// const mat_rumput = new THREE.MeshPhongMaterial({
-//   emissiveMap: grass_texture,
-//   map
-// });
-// let mesh_plane = new THREE.Mesh(plane, mat_rumput);
-// mesh_plane.position.set(0, 0, -50);
-// scene.add(mesh_plane);
-// mesh_plane.rotation.x -= Math.PI / 2;
-
-let controls = new THREE.OrbitControls(cam, renderer.domElement);
-controls.update();
-controls.enabled = false;
-
-// let loader3 = new THREE.CubeTextureLoader();
-// let skybox = loader3.load([
-//   "skybox/px.png",
-//   "skybox/nx.png",
-//   "skybox/py.png",
-//   "skybox/ny.png",
-//   "skybox/pz.png",
-//   "skybox/nz.png",
-// ]);
-// scene.background = skybox;
-
 // Resize Window Function
 window.addEventListener("resize", function () {
   let width = window.innerWidth;
@@ -148,30 +106,6 @@ document.body.onkeypress = function (evt) {
   }
 };
 
-// var vertices, starGeo, stars;
-// var verticesArray = [];
-// function backgroundAnimate() {
-//   starGeo = new THREE.BufferGeometry();
-//   for (let i = 0; i < 600; i++) {
-//     let x = Math.random() * 600 - 300;
-//     let y = Math.random() * 600 - 300;
-//     let z = Math.random() * 600 - 300;
-//     verticesArray.push(x, y, z);
-//   }
-//   starGeo.setAttribute(
-//     "position",
-//     new THREE.Float32BufferAttribute(verticesArray, 3)
-//   );
-//   let sprite = new THREE.TextureLoader().load("../skybox/star.png");
-//   console.log(sprite);
-//   let starMaterial = new THREE.PointsMaterial({
-//     color: 0xcccccc,
-//     map: sprite,
-//   });
-//   stars = new THREE.Points(starGeo, starMaterial);
-//   scene.add(stars);
-// }
-
 // Fungsi untuk check jika menabrak virus
 function checkCollision(virus, person) {
   if (
@@ -191,16 +125,6 @@ function checkCollision(virus, person) {
 }
 
 function animate() {
-  // starGeo.vertices.forEach(p=>{
-  //   p.velocity += p.acceleration;
-  //   p.y -= p.velocity;
-  //   if (p.y <-200) {
-  //     p.y = 200;
-  //     p.velocity = 0;
-  //   }
-  // });
-  // starGeo.verticesNeedUpdate = true;
-  // stars.rotation.y += 0.002;
   if (checkCollision(virus, person) || checkCollision(virus2, person)) {
     let sound4 = new THREE.Audio(pendengar);
     let loaderAudio4 = new THREE.AudioLoader().load(
@@ -250,7 +174,5 @@ function animate() {
 function addSpeed() {
   speed += 0.1;
 }
-
 animate();
 setInterval(addSpeed, 5000);
-// backgroundAnimate();
